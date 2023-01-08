@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My page</title>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+
+    <body>
+        <main id="main-holder">
+            <a href="/logout" id="logout">Logout</a>
+            <div id="text">
+                <p id="login-header">My profile</p>
+                <!-- <p>First name: <span id="profile-firstname"></span></p>
+                <p>Last name: <span id="profile-lastname"></span></p>
+                <p>Login: <span id="profile-login"></span></p>
+                <p>Email: <span id="profile-email"></span></p> -->
+            </div>
+        </main>
+    </body>
+
+
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            background-color: #3a3a3a;
+        }
+        
+        #text{
+            margin: 20px;
+        }
+
+        #logout {
+            opacity: 0;
+        }
+
+        #login-header{
+            font-weight: 400;
+            font-size: 30px;
+            text-align: center;
+            margin-left: 15%;
+        }
+
+        #main-holder {
+            width: 50%;
+            height: 70%;
+            justify-items: center;
+            align-items: center;
+            background-color: white;
+            border-radius: 7px;
+            box-shadow: 0px 0px 5px 2px black;
+        }
+        a#logout{
+            border: 1px solid grey;
+            border-radius: 15px;
+            padding: 10px 20px;
+            background: gray;
+            color: white;
+            text-decoration: none;
+            opacity: 1;
+            float: right;
+            margin: 10px;
+        }
+        a#logout:hover{
+            color: gray;
+            background: white;
+        }
+    </style>
+
+    <script>
+        const token = sessionStorage.getItem('token');
+
+        if (token) {
+            let parsed = JSON.parse(token)
+            axios.get('/api/account', {
+                headers: {
+                    Authorization: `Bearer ${parsed.token}`
+                }
+            }).then((response) => {
+                // console.log(response)
+                // const profileFirstName = document.getElementById("profile-firstname");
+                // const profileLastName = document.getElementById("profile-lastname");
+                // const profileLogin = document.getElementById("profile-login");
+                // const profileEmail = document.getElementById("profile-email");
+
+            });
+        } else {
+            const urlSearchParams = new Proxy(
+                new URLSearchParams(window.location.search), {
+                    get: (params, prop) => params.get(prop),
+                });
+
+            axios
+            .get(`/api/myPage?code=${urlSearchParams.code}`, { })
+            .then((response) => {
+                sessionStorage.setItem(
+                    'token', 
+                    JSON.stringify(response.data)
+                );
+                console.log(response.data)
+            });
+        }
+    </script>
+</html>
